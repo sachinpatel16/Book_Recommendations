@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block contant %}
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-white" style="font-size:50px">Recommend Books</h1>
+            <form action="{% url "recommend" %}" method="post">
+                {% csrf_token %}
+                <input name="name" type="text" class="form-control"><br>
+                <input type="submit" class="btn btn-lg btn-warning">
+                </form>
+            </div>
+            
+            {% if data %}
+            {% for i in data  %}
+            <div class="col-md-3" style="margin-top:50px">
+                <div class="card">
+                    <div class="card-body">
+                        <a href="#"><img class="card-img-top" alt="Photo not available" src="{{i.2}}"></a>
+                        <p class="text-white">{{i.0}}</p>
+                        <h4 class="text-white">{{i.1}}</h4>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <h4 class="text-white">Data not found</h4>
+            
+            {% endif %}
+        </div>
+    </div>
+    
+    
+{% endblock  %}

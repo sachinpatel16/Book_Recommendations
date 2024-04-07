@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block contant %}
+    
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-white" style="font-size:50px">Top 50 Books</h1>
+        </div>
+        <div class="search-container">
+            <form  method='get'>
+                <input type="text" placeholder="Search..." name="search" value="" >
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        {% for book in books_data %}
+            <div class="col-md-3" style="margin-top:25px">
+                <div class="card">
+                    <div class="card-body">
+                        {% if user.is_authenticated %}
+                        <a href="recommend/{{book.id}}"><img class="card-img-top" src="{{book.pic_url}}" alt="pic not found"></a>
+                        {% else %}
+                        <a href="/login"><img class="card-img-top" src="{{book.pic_url}}" alt="pic not found"></a>
+                        {% endif %}
+                        <p class="text-white">{{book.name}}</p>
+                        <h4 class="text-white">{{book.author}}</h4>
+                        <h4 class="text-white">Vot - {{book.votes}}</h4>
+                        <h4 class="text-white">Rating - {{book.rating |floatformat:1}}</h4>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock  %}
