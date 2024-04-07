@@ -1,4 +1,4 @@
-# Django Project README
+# Django Project Book_Reacommendation
 
 ## Description
 This is a Django project created for [brief description of your project].
