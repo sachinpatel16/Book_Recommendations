@@ -1,8 +1,10 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
+
+from django.contrib.admin.views.decorators import staff_member_required
 
 from django.shortcuts import get_object_or_404
 
@@ -40,7 +42,7 @@ def logine(request):
         if user: 
             if user.is_active:
                 login(request,user)
-                return redirect('/')
+                return redirect('/book')
             else:
                 return HttpResponse("Account is not found")
         else:
@@ -50,17 +52,21 @@ def logine(request):
     return render(request,'login.html')
 
 def singup(request):
-    if request.method == 'POST':
-        form = UserForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Account created for {username}!')
-            return redirect('login')  # Redirect to login page after successful registration
+    try:
+        if request.method == 'POST':
+            form = UserForm(request.POST)
+            if form.is_valid():
+                form.save()
+                username = form.cleaned_data.get('username')
+                messages.success(request, f'Account created for {username}!')
+                return redirect('login')  # Redirect to login page after successful registration
+    except:
+        pass
     else:
         form = UserForm()
     return render(request,'singin.html')
 
+@login_required
 def update(request):
     try:
         for i in range(len(popular_df)):
@@ -75,9 +81,18 @@ def update(request):
                 pass
     except:
         pass
-    return redirect('/')
+    return redirect('/book')
 
-def index(request):
+@login_required
+def delete_book(request,id):
+    book = get_object_or_404(Book,id=id)
+    book.delete()
+    return redirect('/bookChange')
+
+def landing(request):
+    return render(request,'landing.html')
+
+def book(request):
     # data ={}
     try:
         book = Book.objects.all()
@@ -96,6 +111,27 @@ def index(request):
     return render(request,'index.html',context=data)
 
 
+@staff_member_required
+# @login_required
+def bookChange(request):
+    try:
+        book = Book.objects.all()
+        if request.method == 'GET':
+            st = request.GET.get('search')
+            print(st,'search')
+            if st != None:
+                book = Book.objects.filter(name__icontains=st)
+                print(book,'book')
+        data ={
+            'books_data':book
+        }
+    except:
+        pass
+    return render(request,'book_change.html',context=data)
+
+def contect(request):
+    return render(request,'contactus.html')
+
 @login_required
 def recomands(request):
     data = []
@@ -112,6 +148,7 @@ def recomands(request):
                 item.extend(list(temp_df.drop_duplicates('Book-Title')['Book-Title'].values))
                 item.extend(list(temp_df.drop_duplicates('Book-Title')['Book-Author'].values))
                 item.extend(list(temp_df.drop_duplicates('Book-Title')['Image-URL-M'].values))
+                item.extend(list(temp_df.drop_duplicates('Book-Title')['avg_ratings'].values))
                 
                 data.append(item)
 
@@ -179,3 +216,8 @@ def recomand(request,id):
             # votes =popular_df['num_ratings'].iloc[i]
             # rating =  popular_df['avg_ratings'].iloc[i]
             # Book.objects.create(name = book_name, author=author ,rating=rating,votes=votes, pic_url=image_url)
+
+
+def custom_404_view(request, exception):
+    return render(request, '404.html', status=404)
+    # return HttpResponse("Page not found")

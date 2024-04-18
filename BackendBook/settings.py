@@ -11,9 +11,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8yxe=gjf^9yq)=-0r93=d@-bwug^4sp+-0l6hxfc-g&48q)h5g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -62,12 +63,24 @@ WSGI_APPLICATION = 'BackendBook.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': 'Books_data',
+        # 'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+            'host': 'mongodb+srv://sachinpatel7496007:Sachin@cluster0.twdv10i.mongodb.net/',
+        }
     }
 }
+
 
 
 # Password validation
